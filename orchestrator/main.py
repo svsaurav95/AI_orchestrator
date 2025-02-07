@@ -3,12 +3,20 @@ from fastapi import FastAPI, HTTPException
 import docker
 import requests
 import json
+import os
 from groq import Groq
 from pydantic import BaseModel
 
 app = FastAPI()
 docker_client = docker.from_env()
-groq_client = Groq(api_key="your-groq-api-key")
+
+# Load secrets from environment variables
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+if not GROQ_API_KEY:
+    raise ValueError("GROQ_API_KEY environment variable is not set")
+
+groq_client = Groq(api_key=GROQ_API_KEY)
 
 class UserRequest(BaseModel):
     request: str
